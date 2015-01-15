@@ -7,13 +7,13 @@ server {
   index /usr/local/share/maintenance.html index.html index.htm index.php =404;
 
   # Cloudflare Proxy IP list Configurations
-  include global/cloudflare.conf
+  include global/cloudflare.conf;
 
   # Global restirctions
-  include global/restrictions.conf
+  include global/restrictions.conf;
 
   # SSL/TLS Static Configuration
-  include global/ssl.conf
+  include global/ssl.conf;
 
   location / {
     try_files /usr/local/share/maintenance.html $uri $uri/ /index.php?$args =404;
