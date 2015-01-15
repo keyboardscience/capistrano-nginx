@@ -3,7 +3,8 @@
 server {
   # General settings
   listen 443;
-  server_name <%= fetch(:nginx_server_name).to_s %>
+  server_name <%= fetch(:nginx_server_name).to_s %>;
+  root /var/www/<%= fetch(:nginx_server_name).to-s %>;
   index /usr/local/share/maintenance.html index.html index.htm index.php =404;
 
   # Cloudflare Proxy IP list Configurations

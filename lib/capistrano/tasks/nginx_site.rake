@@ -5,12 +5,18 @@ namespace :load do
         set :nginx_sites_available_dir, -> { 'sites-available' }
         set :nginx_sites_enabled_dir, -> { 'sites-enabled' }
         set :nginx_ssl_resolver, -> { '172.31.0.2' }
+        set :nginx_ssl_cert_name, -> { 'tls.pem' }
+        set :nginx_ssl_key_name, -> { 'tls.key' }
+        set :nginx_ssl_cert_prefix, -> { '/etc/ssl/certs' }
+        set :nginx_ssl_key_prefix, -> { '/etc/ssl/private' }
+        set :nginx_ssl_cert_path, -> { File.join(fetch(:nginx_ssl_cert_prefix).to_s,fetch(:nginx_ssl_cert_name).to_s) }
+        set :nginx_ssl_key_path, -> { File.join(fetch(:nginx_ssl_key_prefix).to_s,fetch(:nginx_ssl_key_name).to_s) }
         set :nginx_roles, -> { :web }
         set :nginx_server_name, -> { :default }
         set :nginx_wordpress, -> { false }
         set :nginx_statemic, -> { false }
         set :upstream, -> { true }
-        set :upstream_socket, -> { File.join(fetch(:socket_path),"#{ fetch(:nginx_server_name) }-fpm.sock") }
+        set :upstream_socket, -> { File.join(fetch(:socket_path).to_s,"#{ fetch(:nginx_server_name) }-fpm.sock") }
     end
 end
 
@@ -43,6 +49,8 @@ namespace :deploy do
                 on release_roles fetch(:nginx_roles) do
                     conf = File.join(fetch(:nginx_config_dir),'global')
                     sudo :mkdir, '-pv', conf.to_s
+                    sudo :touch, fetch(:nginx_ssl_cert_path).to_s
+                    sudo :touch, fetch(:nginx_ssl_key_path).to_s
 
                     Dir.foreach(File.expand_path('../../templates/nginx/global', __FILE__)) do |global|
                         dest_filename = global.to_s.split('/').pop.sub(/\.conf\.erb/,'.conf')

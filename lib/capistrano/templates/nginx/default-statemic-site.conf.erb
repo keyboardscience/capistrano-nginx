@@ -3,8 +3,11 @@
 server {
     listen 443;
     server_name <%=fetch(:nginx_server_name).to_s%>;
-    root /var/www/<%=fetch(:nginx_server_name).to_s%>;
+    root /var/www/<%=fetch(:application).to_s%>/current;
     index index.php;
+
+    access_log /var/www/<%=fetch(:application).to_s%>/current/log/access.log;
+    error_log /var/www/<%=fetch(:application).to_s%>/current/log/error.log;
 
     include global/cloudflare.conf;
 
