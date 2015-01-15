@@ -1,6 +1,6 @@
 [<%=fetch(:nginx_site_name).to_s%>]
 
-listen = <%=File.join(fetch(:upstream_socket)%>
+listen = <%=fetch(:upstream_socket)%>
 listen.backlog = -1
 listen.owner = www-data
 listen.group = www-data

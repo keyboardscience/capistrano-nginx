@@ -4,7 +4,7 @@ namespace :load do
         set :socket_path, -> { '/var/run' }
         set :upstream_roles, -> { :web }
         set :upstream, -> { true }
-        set :upstream_socket, -> { File.join(fetch(:socket_path),"#{ fetch(:server_name) }-fpm.sock") }
+        set :upstream_socket, -> { File.join(fetch(:socket_path),"#{ fetch(:nginx_server_name) }-fpm.sock") }
         set :upstream_template, -> { :default }
         set :upstream_config_dir, -> { '/etc/php5/fpm/pool.d' }
     end
