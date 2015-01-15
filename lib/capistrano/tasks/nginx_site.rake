@@ -4,6 +4,7 @@ namespace :load do
         set :nginx_config_dir, -> { '/etc/nginx' }
         set :nginx_sites_available_dir, -> { 'sites-available' }
         set :nginx_sites_enabled_dir, -> { 'sites-enabled' }
+        set :nginx_ssl_resolver, -> { '172.31.0.2' }
         set :nginx_roles, -> { :web }
         set :nginx_server_name, -> { :default }
         set :nginx_wordpress, -> { false }

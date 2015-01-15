@@ -4,7 +4,7 @@ ssl on;
 ssl_session_timeout 10m;
 ssl_stapling on;
 ssl_stapling_verify on;
-resolver <%= fetch(:nginx_ssl_resolver).to_s %>
+resolver <%= fetch(:nginx_ssl_resolver).to_s %>;
 ssl_session_cache builtin:1000 shared:SSL:10m;
 ssl_prefer_server_ciphers on;
 ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
