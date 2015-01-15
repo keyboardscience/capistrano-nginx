@@ -2,7 +2,7 @@
 
 server {
     listen 443;
-    servername <%=fetch(:nginx_server_name).to_s%>;
+    server_name <%=fetch(:nginx_server_name).to_s%>;
     root /var/www/<%=fetch(:nginx_server_name).to_s%>;
     index index.php;
 

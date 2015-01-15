@@ -33,7 +33,7 @@ namespace :deploy do
                     if !(test("[ -f #{site_path} ]"))
                         abort('Unable to locate site configuration to validate.')
                     end
-                    valid_config?(site_path)
+                    valid_config?('/etc/nginx/nginx.conf')
                 end
             end
 
@@ -43,11 +43,15 @@ namespace :deploy do
                     conf = File.join(fetch(:nginx_config_dir),'global')
                     sudo :mkdir, '-pv', conf.to_s
 
-                    Dir.foreach(File.expand_path('../../templates/nginx/global')) do |global|
+                    Dir.foreach(File.expand_path('../../templates/nginx/global', __FILE__)) do |global|
                         dest_filename = global.to_s.split('/').pop.sub(/\.conf\.erb/,'.conf')
-                        rendered = ERB.new(File.read(global)).result(binding)
-                        upload! StringIO.new(rendered), dest_filename
-                        sudo :mv, '-fv', dest_filename, conf
+                        if !(dest_filename.match(/^\./) != nil)
+                            info(global)
+                            local_file = File.join(File.expand_path('../../templates/nginx/global',__FILE__),global)
+                            rendered = ERB.new(File.read(local_file)).result(binding)
+                            upload! StringIO.new(rendered), "/tmp/#{dest_filename}"
+                            sudo :mv, '-fv', "/tmp/#{dest_filename}", conf
+                        end
                     end
                 end
             end
@@ -55,7 +59,7 @@ namespace :deploy do
             desc 'Add nginx site.'
             task :add => ['deploy:nginx:site:globals'] do
                 on release_roles fetch(:nginx_roles) do
-                    nginx_sites_available_dir = File.join(fetch(:nginx_config_dir),fetch(:nginx_sites_enabled_dir))
+                    nginx_sites_available_dir = File.join(fetch(:nginx_config_dir),fetch(:nginx_sites_available_dir))
                     within nginx_sites_available_dir do
                         ## render template
                         site = fetch(:nginx_server_name)
@@ -63,9 +67,9 @@ namespace :deploy do
                             site_file = File.expand_path('../../templates/nginx/default-nginx-site.conf.erb', __FILE__)
                         else
                             if fetch(:nginx_wordpress)
-                                site_file = File.expand_path('../../templates/nginx/default-wordpress-site.conf.erb'. __FILE__)
+                                site_file = File.expand_path('../../templates/nginx/default-wordpress-site.conf.erb', __FILE__)
                             elsif fetch(:nginx_statemic)
-                                site_file = File.expand_path('../../templates/nginx/default-statemic-site.conf.erb'. __FILE__)
+                                site_file = File.expand_path('../../templates/nginx/default-statemic-site.conf.erb', __FILE__)
                             else
                                 site_file = File.expand_path("../../templates/nginx/#{site.to_s}.conf.erb", __FILE__)
                             end
@@ -93,8 +97,8 @@ namespace :deploy do
                     av_site = File.join(av_dir,site)
                     within en_dir do
                         if test("[ -f #{av_site} ]")
-                            if valid_config?(av_site)
-                                sudo :ln, '-s', av_site.to_s, en_site.to_s
+                            if valid_config?('/etc/nginx/nginx.conf')
+                                sudo :ln, '-sf', av_site.to_s, en_site.to_s
                             end
                         end
                     end
