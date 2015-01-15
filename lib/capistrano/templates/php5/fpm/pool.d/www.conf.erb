@@ -1,0 +1,20 @@
+[<%=fetch(:nginx_site_name).to_s%>]
+
+listen = <%=File.join(fetch(:upstream_socket)%>
+listen.backlog = -1
+listen.owner = www-data
+listen.group = www-data
+listen.mode = 0660
+listen.allowed_clients = 127.0.0.1
+
+; Unix socket owner and group
+user = <%=fetch(:deploy_user).to_s%>
+group = www-data
+
+; Process manager configurations
+pm = dynamic
+pm.max_children = 75
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20
+pm.max_requests = 500

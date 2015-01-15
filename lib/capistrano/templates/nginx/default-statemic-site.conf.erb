@@ -1,0 +1,15 @@
+# initial rednering by Cap
+
+server {
+    listen 443;
+    servername <%=fetch(:nginx_server_name).to_s%>;
+    root /var/www/<%=fetch(:nginx_server_name).to_s%>;
+    index index.php;
+
+    include global/cloudflare.conf
+
+    include global/ssl.conf
+
+    include global/restrictions.conf;
+    include global/statemic.conf;
+}

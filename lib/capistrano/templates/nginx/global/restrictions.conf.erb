@@ -1,0 +1,31 @@
+# don't log reqs for favicon.ico
+location = /favicon.ico {
+    log_not_found off;
+    access_log off;
+}
+
+# don't log reqs for robots.txt
+location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+}
+
+# there is no need for folks to see hidden dirs
+location ~ /\. {
+    deny all;
+}
+
+# don't allow php files in the uploads dir
+location ~* /(?:uploads|files)/.*\.php$ {
+    deny all;
+}
+
+# statemic folders
+location ~ /(_app|_config|_content) {
+    deny all;
+}
+
+location ~ (\.yaml) {
+    return 404;
+}
