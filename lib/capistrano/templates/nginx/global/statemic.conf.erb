@@ -1,10 +1,10 @@
 # initial rendering by Cap
 
-# Wordpress multisite configuration
+# Statemic multisite configuration
 #
 
 location / {
-    try_files /usr/local/share/maintenance.html $uri $uri/ /index.php?$args =404;
+    try_files /usr/local/share/maintenance.html $uri $uri/ /index.php =404;
 }
 
 rewrite /admin.php(/.*)?$ /admin.php;
@@ -21,6 +21,6 @@ location ~ \.php$ {
     
     #include fastcgi.conf;
     fastcgi_index index.php;
-    fastcgi_pass unix:<%=fetch(:upstream_socket).to_s%>;
+    fastcgi_pass $socket;
     include fastcgi_params;
 }

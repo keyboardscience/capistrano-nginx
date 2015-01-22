@@ -29,3 +29,12 @@ location ~ /(_app|_config|_content) {
 location ~ (\.yaml) {
     return 404;
 }
+
+location ~ /mobile/?$ {
+    if ($http_user_agent ~ (iPhone|iPad|iPod)) {
+        rewrite .* https://itunes.apple.com/us/app/prevent/id805711008?mt=8;
+    }
+    if ($http_user_agent ~ Android) {
+        rewrite .* https://play.google.com/store/apps/details?id=com.omada.prevent;
+    }
+}

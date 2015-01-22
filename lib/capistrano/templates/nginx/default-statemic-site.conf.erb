@@ -1,6 +1,39 @@
 # initial rendering by Cap
 
 server {
+    listen 80;
+    server_name <%=fetch(:nginx_server_name).to_s%>;
+    return         301 https://$server_name$request_uri;
+}
+
+server {
+    listen 80;
+    server_name m.<%=fetch(:nginx_server_name).to_s%>;
+    return         301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443;
+    server_name m.<%=fetch(:nginx_server_name).to_s%>;
+    root /var/www/<%=fetch(:application).to_s%>/current;
+    index index.php;
+
+    access_log /var/www/<%=fetch(:application).to_s%>/current/log/mobile-access.log;
+    error_log /var/www/<%=fetch(:application).to_s%>/current/log/error.log;
+
+    include global/cloudflare.conf;
+
+    include global/ssl.conf;
+    ssl_certificate <%= fetch(:nginx_ssl_cert_path) %>;
+    ssl_certificate_key <%= fetch(:nginx_ssl_key_path) %>;
+
+    set $socket "unix:<%= fetch(:upstream_socket).to_s %>";
+
+    include global/restrictions.conf;
+    include global/statemic.conf;
+}
+
+server {
     listen 443;
     server_name <%=fetch(:nginx_server_name).to_s%>;
     root /var/www/<%=fetch(:application).to_s%>/current;
@@ -14,6 +47,8 @@ server {
     include global/ssl.conf;
     ssl_certificate <%= fetch(:nginx_ssl_cert_path) %>;
     ssl_certificate_key <%= fetch(:nginx_ssl_key_path) %>;
+
+    set $socket "unix:<%= fetch(:upstream_socket).to_s %>";
 
     include global/restrictions.conf;
     include global/statemic.conf;

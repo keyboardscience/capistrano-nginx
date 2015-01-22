@@ -1,6 +1,12 @@
 # initial rednering by Cap
 
 server {
+    listen 80;
+    server_name <%=fetch(:nginx_server_name).to_s%>;
+    return         301 https://$server_name$request_uri;
+}
+
+server {
     listen 443;
     server_name <%=fetch(:nginx_server_name).to_s%>;
     root /var/www/<%=fetch(:application).to_s%>/current;
@@ -14,6 +20,8 @@ server {
     include global/ssl.conf;
     ssl_certificate <%= fetch(:nginx_ssl_cert_path) %>;
     ssl_certificate_key <%= fetch(:nginx_ssl_key_path) %>;
+
+    set $socket "unix:<%= fetch(:upstream_socket).to_s %>";
 
     include global/restrictions.conf;
     include global/wordpress.conf;
